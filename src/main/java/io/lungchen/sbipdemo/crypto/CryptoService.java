@@ -14,8 +14,11 @@ import java.util.Base64;
 
 public class CryptoService {
     private static CryptoService cryptoService;
-    private CryptoService() {
 
+    private final Connection connection;
+
+    private CryptoService() {
+        this.connection = Connection.getConnection("sbipdemochannel", "sbipsc");
     }
 
     public static CryptoService getCryptoService() {
@@ -51,8 +54,7 @@ public class CryptoService {
 
         try {
 
-            Contract contract = Connection.getContract("sbipdemochannel", "sbipsc");
-            publicKey = new String(contract.evaluateTransaction("peekPublicKey", accountId));
+            publicKey = new String(connection.getContract().evaluateTransaction("peekPublicKey", accountId));
 
         } catch (Exception e) {
             e.getMessage();

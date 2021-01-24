@@ -33,7 +33,7 @@ public class AccountController {
         }
 
         Double amount = accountService.getAmount(requestBody.getAccountId(), requestBody.getKey());
-        return new Balance(requestBody.getId(), 0.0, "ok");
+        return new Balance(requestBody.getId(), amount, "ok");
     }
 
     @PostMapping("/account")

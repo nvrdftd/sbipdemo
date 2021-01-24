@@ -4,22 +4,44 @@ import org.hyperledger.fabric.gateway.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
 
 public class Connection {
-    public static Contract getContract(String networkName, String contractName) throws Exception {
 
-        Path walletPath = Paths.get("wallet");
-        Wallet wallet = Wallets.newFileSystemWallet(walletPath);
+    private static Connection connection;
 
-        Path networkConfigPath = Paths.get("network", "connection-org1.yaml");
+    private Contract contract;
 
-        Gateway.Builder builder = Gateway.createBuilder();
-        builder.identity(wallet, "appUser").networkConfig(networkConfigPath);
+    private Connection(String networkName, String contractName) {
 
-        Gateway gateway = builder.connect();
+        try {
 
-        Network network = gateway.getNetwork(networkName);
-        return network.getContract(contractName);
+            Path walletPath = Paths.get("wallet");
+            Wallet wallet = Wallets.newFileSystemWallet(walletPath);
+
+            Path networkConfigPath = Paths.get("network", "connection-org1.yaml");
+
+            Gateway.Builder builder = Gateway.createBuilder();
+            builder.identity(wallet, "appUser").networkConfig(networkConfigPath);
+
+            Gateway gateway = builder.connect();
+
+            Network network = gateway.getNetwork(networkName);
+
+            contract = network.getContract(contractName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Connection getConnection(String networkName, String contractName) {
+        if (connection == null) {
+            connection = new Connection(networkName, contractName);
+        }
+
+        return connection;
+    }
+
+    public Contract getContract() {
+        return contract;
     }
 }

@@ -7,12 +7,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransferService {
 
+    private final Connection connection;
+
+    public TransferService() {
+        this.connection = Connection.getConnection("sbipdemochannel", "sbipsc");
+    }
+
     public boolean transfer(String from, String to, Double amount, String publicKey) {
         try {
 
-            Contract contract = Connection.getContract("sbipdemochannel", "sbipsc");
-
-            contract.submitTransaction("transfer", from, to, amount.toString(), publicKey);
+            connection.getContract().submitTransaction("transfer", from, to, amount.toString(), publicKey);
 
         } catch (Exception e) {
             e.getMessage();
